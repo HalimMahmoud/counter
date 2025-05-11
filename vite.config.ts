@@ -16,16 +16,16 @@ export default defineConfig({
         description: "Games tracking score app",
         theme_color: "#ffffff", // Ensure this matches your design
         background_color: "#ffffff", // Make sure this is also appropriate
-        start_url: "/",
+        start_url: "/counter/",
         display: "standalone", // This is the key to hide the address bar
         icons: [
           {
-            src: "/icon-192x192.png",
+            src: "/counter/icon-192x192.png",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "/icon-512x512.png",
+            src: "/counter/icon-512x512.png",
             sizes: "512x512",
             type: "image/png",
           },

@@ -1,11 +1,17 @@
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react-swc";
+import tailwindcss from "@tailwindcss/vite";
 
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  test: {
+    globals: true,
+    environment: "jsdom",
+  },
   base: "/counter/", // 👈 Important!
   plugins: [
+    tailwindcss(),
     react(),
     VitePWA({
       registerType: "autoUpdate",

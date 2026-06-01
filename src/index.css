@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-ps-triangle: var(--ps-triangle);
+  --color-ps-circle: var(--ps-circle);
+  --color-ps-cross: var(--ps-cross);
+  --color-ps-square: var(--ps-square);
+  
+  --color-theme-bg: var(--bg-color);
+  --color-theme-card: var(--card-bg);
+  --color-theme-border: var(--border-color);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-cta: var(--cta);
+
+  --font-sans: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Archivo', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  :root {
+    /* Mirrored Light Mode (Page has darker light BG, Cards have lighter BG) */
+    --bg-color: #E2E8F0;            /* Soft slate-gray page background (darker light BG) */
+    --card-bg: #FFFFFF;             /* Pure, solid crisp white card background (lighter BG) */
+    --border-color: #CBD5E1;        /* Clean slate border lines */
+    
+    --text-primary: #0F172A;        /* Deep slate-blue dark text */
+    --text-secondary: #475569;      /* Balanced gray-slate description text */
+    --cta: #22C55E;                 /* Master Run Green CTA */
+    
+    /* PlayStation symbol accents in Light Mode (high legibility) */
+    --ps-triangle: oklch(0.45 0.13 150);      /* Calming Forest Green */
+    --ps-circle: oklch(0.48 0.14 25);        /* Rich Coral Red */
+    --ps-cross: oklch(0.44 0.14 250);        /* Deep Twilight Blue */
+    --ps-square: oklch(0.48 0.12 310);       /* Rich Lilac Purple */
+  }
+
+  .dark {
+    /* Master Dark Mode (Page has darker dark BG, Cards have lighter BG) */
+    --bg-color: #0F172A;            /* Code dark base background (darker background) */
+    --card-bg: #1E293B;             /* Primary graphite card base (lighter background) */
+    --border-color: #334155;        /* Secondary graphite border lines */
+    
+    --text-primary: #F8FAFC;        /* Crisp off-white primary text */
+    --text-secondary: #94A3B8;      /* Balanced slate gray descriptions */
+    --cta: #22C55E;                 /* Master Run Green CTA */
+    
+    /* PlayStation Symbol accents in Dark Mode (calming twilight symbols) */
+    --ps-triangle: oklch(0.65 0.14 150);      /* Calming Sage Green */
+    --ps-circle: oklch(0.60 0.15 25);        /* Soft Coral Red */
+    --ps-cross: oklch(0.58 0.15 250);        /* Calming Twilight Blue */
+    --ps-square: oklch(0.65 0.13 310);       /* Restful Lilac Pink */
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--bg-color);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  }
+}
+
+/* Custom PlayStation shape pattern background */
+.gaming-grid-bg {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+}
+
+.dark .gaming-grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background-color: var(--bg-color);
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background-color: var(--border-color);
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-secondary);
+}
+
+/* Micro-interaction button press */
+.button-press {
+  transition: transform 0.1s ease;
+}
+.button-press:active {
+  transform: scale(0.96);
+}

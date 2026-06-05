@@ -1,26 +1,60 @@
 import { proxy, subscribe } from "valtio";
 import moment from "moment";
+import type { Player, Team, LogEntry } from "./types";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+export type { Player, Team, LogEntry };
 
-export type Player   = { id: number; name: string; score: number };
-export type Team     = { id: number; name: string; score: number };
-export type LogEntry = { date: string; message: string; id: number };
+
+
+// ─── Checkpoint helpers ───────────────────────────────────────────────────────
+
+export function copyStateCheckpoint(s: {
+  scores: Record<string, number>;
+  activity: LogEntry[];
+  players: Player[];
+  teams: Team[];
+}) {
+  return {
+    scores: { ...s.scores },
+    activity: s.activity.map((a) => ({ ...a })),
+    players: s.players.map((p) => ({ ...p })),
+    teams: s.teams.map((t) => ({ ...t })),
+  };
+}
+
+export function applyStateCheckpoint(
+  store: { scores: Record<string, number>; activity: LogEntry[]; players: Player[]; teams: Team[] },
+  checkpoint: { scores: Record<string, number>; activity: LogEntry[]; players: Player[]; teams: Team[] }
+) {
+  Object.keys(store.scores).forEach((key) => { delete store.scores[key]; });
+  Object.assign(store.scores, checkpoint.scores);
+
+  store.activity.length = 0;
+  store.activity.push(...checkpoint.activity);
+
+  store.players.length = 0;
+  checkpoint.players.forEach((p) => store.players.push({ ...p }));
+
+  store.teams.length = 0;
+  checkpoint.teams.forEach((t) => store.teams.push({ ...t }));
+}
 
 // ─── Persistence helpers ──────────────────────────────────────────────────────
 
-const STORAGE_KEY = "arena-store-v1";
+const STORAGE_KEY      = "arena-store-v1";
+const PERSIST_FLAG_KEY = "arena-persist-enabled";
 
 type PersistedState = {
-  players:  Player[];
-  teams:    Team[];
-  scores:   Record<string, number>;
-  activity: LogEntry[];
-  history:  { scores: Record<string, number>; activity: LogEntry[] }[];
-  future:   { scores: Record<string, number>; activity: LogEntry[] }[];
+  players:      Player[];
+  teams:        Team[];
+  scores:       Record<string, number>;
+  activity:     LogEntry[];
+  history:      { scores: Record<string, number>; activity: LogEntry[]; players: Player[]; teams: Team[] }[];
+  future:       { scores: Record<string, number>; activity: LogEntry[]; players: Player[]; teams: Team[] }[];
+  nextPlayerId: number;
 };
 
-function loadState(): PersistedState | null {
+export function loadState(): PersistedState | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
@@ -30,7 +64,7 @@ function loadState(): PersistedState | null {
   }
 }
 
-function saveState(state: PersistedState) {
+export function saveState(state: PersistedState) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch {
@@ -38,44 +72,112 @@ function saveState(state: PersistedState) {
   }
 }
 
-// ─── Default values ───────────────────────────────────────────────────────────
+// ─── Persistence control flag ─────────────────────────────────────────────────
+// A plain mutable object (not proxy) — checked inside the subscribe callback.
+// Allows App.tsx to disable persistence without triggering a re-subscribe.
 
-const defaults = {
-  players:  [{ name: "Player 1", id: 0, score: 0 }, { name: "Player 2", id: 1, score: 0 }] as Player[],
-  teams:    [{ name: "Team 1",  id: 0, score: 0 }, { name: "Team 2",  id: 1, score: 0 }]  as Team[],
-  scores:   {} as Record<string, number>,
-  activity: [] as LogEntry[],
-  history:  [] as { scores: Record<string, number>; activity: LogEntry[] }[],
-  future:   [] as { scores: Record<string, number>; activity: LogEntry[] }[],
+export const persistenceControl = {
+  enabled: localStorage.getItem(PERSIST_FLAG_KEY) !== "false",
 };
 
-// Hydrate from localStorage (or fall back to defaults)
-const saved = loadState();
+export function setPersistence(enabled: boolean) {
+  persistenceControl.enabled = enabled;
+  localStorage.setItem(PERSIST_FLAG_KEY, String(enabled));
+}
+
+// ─── Default values ───────────────────────────────────────────────────────────
+
+const storeDefaults = {
+  players:      [{ name: "Alpha", id: 0, score: 0 }, { name: "Bravo", id: 1, score: 0 }] as Player[],
+  teams:        [{ name: "Team 1", id: 0, score: 0 }, { name: "Team 2", id: 1, score: 0 }]  as Team[],
+  scores:       {} as Record<string, number>,
+  activity:     [] as LogEntry[],
+  history:      [] as { scores: Record<string, number>; activity: LogEntry[]; players: Player[]; teams: Team[] }[],
+  future:       [] as { scores: Record<string, number>; activity: LogEntry[]; players: Player[]; teams: Team[] }[],
+  nextPlayerId: 2, // 0 and 1 are already used by the two defaults
+};
+
+// Hydrate from localStorage only if persistence is enabled
+const saved = persistenceControl.enabled ? loadState() : null;
 
 // ─── Unified Valtio Store ─────────────────────────────────────────────────────
 
+const getStoreList = (store: any, type: "player" | "team"): (Player | Team)[] => {
+  return type === "player" ? store.players : store.teams;
+};
+
+function findNextName(players: Player[]): string {
+  const codenames = ["Alpha", "Bravo", "Nova", "Cipher"];
+  const usedNames = new Set(players.map((p) => p.name));
+  return codenames.find((c) => !usedNames.has(c)) ?? "Player";
+}
+
+function getPersistedState(store: typeof arenaStore): PersistedState {
+  return {
+    players:      [...store.players],
+    teams:        [...store.teams],
+    scores:       { ...store.scores },
+    activity:     [...store.activity],
+    nextPlayerId: store.nextPlayerId,
+    history:      store.history.map(copyStateCheckpoint),
+    future:       store.future.map(copyStateCheckpoint),
+  };
+}
+
+// ─── Store method helpers ────────────────────────────────────────────────────
+
+function clearListAndRefill<T extends object>(list: T[], defaults: T[]) {
+  list.length = 0;
+  defaults.forEach((item) => list.push({ ...item }));
+}
+
+function clearScores(scores: Record<string, number>) {
+  Object.keys(scores).forEach((key) => { delete scores[key]; });
+}
+
+function buildRenameEntry(
+  type: "player" | "team",
+  id: number,
+  oldName: string,
+  newName: string
+): LogEntry {
+  return {
+    date: moment().calendar(),
+    message: `${oldName} changed name to ${newName}`,
+    id: Date.now(),
+    competitorId: `${type}-${id}`,
+    oldName,
+    newName,
+    type: "rename",
+  };
+}
+
 export const arenaStore = proxy({
   // ── Lobby configuration ──────────────────────────────────────────────────
-  players: (saved?.players ?? defaults.players) as Player[],
-  teams:   (saved?.teams   ?? defaults.teams)   as Team[],
+  players: (saved?.players ?? storeDefaults.players) as Player[],
+  teams:   (saved?.teams   ?? storeDefaults.teams)   as Team[],
+
+  // ── Monotonic ID counter (never resets, never reuses) ────────────────────
+  nextPlayerId: saved?.nextPlayerId
+    ?? (saved?.players && saved.players.length > 0
+        ? Math.max(...saved.players.map((p) => p.id)) + 1
+        : storeDefaults.nextPlayerId),
 
   // ── Arena session ─────────────────────────────────────────────────────────
-  scores:   (saved?.scores   ?? defaults.scores)   as Record<string, number>,
-  activity: (saved?.activity ?? defaults.activity) as LogEntry[],
+  scores:   (saved?.scores   ?? storeDefaults.scores)   as Record<string, number>,
+  activity: (saved?.activity ?? storeDefaults.activity) as LogEntry[],
 
-  // History stacks — persisted so undo/redo survives app restarts
-  history: (saved?.history ?? defaults.history) as { scores: Record<string, number>; activity: LogEntry[] }[],
-  future:  (saved?.future  ?? defaults.future)  as { scores: Record<string, number>; activity: LogEntry[] }[],
+  // History stacks
+  history: (saved?.history ?? storeDefaults.history) as { scores: Record<string, number>; activity: LogEntry[]; players: Player[]; teams: Team[] }[],
+  future:  (saved?.future  ?? storeDefaults.future)  as { scores: Record<string, number>; activity: LogEntry[]; players: Player[]; teams: Team[] }[],
 
   // ── Lobby actions ─────────────────────────────────────────────────────────
 
   addPlayer() {
     if (this.players.length >= 4) return;
-    const nextId =
-      this.players.length > 0
-        ? Math.max(...this.players.map((p) => p.id)) + 1
-        : 1;
-    this.players.push({ name: `Player ${nextId + 1}`, id: nextId, score: 0 });
+    const id = this.nextPlayerId++;
+    const name = findNextName(this.players);
+    this.players.push({ name, id, score: 0 });
   },
 
   removePlayer(id: number) {
@@ -84,78 +186,87 @@ export const arenaStore = proxy({
     if (idx !== -1) this.players.splice(idx, 1);
   },
 
-  changePlayer(id: number, name: string) {
-    const p = this.players.find((p) => p.id === id);
-    if (p) p.name = name;
+  changeName(type: "player" | "team", id: number, name: string) {
+    const list = getStoreList(this, type);
+    const p = list.find((item) => item.id === id);
+    if (!p) return;
+    const oldName = p.name;
+    const isActive = this.activity.length > 0;
+    if (isActive) {
+      this.history.push(copyStateCheckpoint(this));
+      this.future.length = 0;
+    }
+    p.name = name;
+    if (isActive) this.activity.push(buildRenameEntry(type, id, oldName, name));
   },
 
-  changeTeam(id: number, name: string) {
-    const t = this.teams.find((t) => t.id === id);
-    if (t) t.name = name;
+  setAvatar(type: "player" | "team", id: number, avatar: string) {
+    const list = getStoreList(this, type);
+    const p = list.find((item) => item.id === id);
+    if (p) p.avatar = avatar;
+  },
+
+  // ── Full reset to factory defaults ────────────────────────────────────────
+
+  clearAndReset() {
+    clearListAndRefill(this.players, storeDefaults.players);
+    clearListAndRefill(this.teams, storeDefaults.teams);
+    clearScores(this.scores);
+    this.activity.length = 0;
+    this.history.length = 0;
+    this.future.length = 0;
+    this.nextPlayerId = storeDefaults.nextPlayerId;
   },
 
   // ── Arena session actions ─────────────────────────────────────────────────
 
   initializeSession(competitorIds: string[]) {
-    for (const key in this.scores) delete this.scores[key];
+    clearScores(this.scores);
     competitorIds.forEach((id) => { this.scores[id] = 0; });
     this.activity.length = 0;
     this.activity.push({ date: moment().calendar(), message: "Game has been started.", id: 0 });
     this.history.length = 0;
-    this.future.length  = 0;
+    this.future.length = 0;
   },
 
   submitPoints(competitorId: string, points: number, message: string, date: string) {
-    this.history.push({ scores: { ...this.scores }, activity: [...this.activity] });
+    this.history.push(copyStateCheckpoint(this));
     this.future.length = 0;
     this.scores[competitorId] = (this.scores[competitorId] ?? 0) + points;
-    this.activity.push({ date, message, id: Date.now() });
+    this.activity.push({ date, message, id: Date.now(), competitorId, points, type: "score" });
   },
 
   undo() {
     if (this.history.length === 0) return;
-    this.future.push({ scores: { ...this.scores }, activity: [...this.activity] });
+    this.future.push(copyStateCheckpoint(this));
     const prev = this.history.pop()!;
-    for (const key in this.scores) delete this.scores[key];
-    Object.assign(this.scores, prev.scores);
-    this.activity.length = 0;
-    this.activity.push(...prev.activity);
+    applyStateCheckpoint(this, prev);
   },
 
   redo() {
     if (this.future.length === 0) return;
-    this.history.push({ scores: { ...this.scores }, activity: [...this.activity] });
+    this.history.push(copyStateCheckpoint(this));
     const next = this.future.pop()!;
-    for (const key in this.scores) delete this.scores[key];
-    Object.assign(this.scores, next.scores);
-    this.activity.length = 0;
-    this.activity.push(...next.activity);
+    applyStateCheckpoint(this, next);
   },
 
   resetSession() {
     this.history.length = 0;
     this.future.length  = 0;
-    for (const key in this.scores) this.scores[key] = 0;
+    Object.keys(this.scores).forEach((key) => { this.scores[key] = 0; });
     this.activity.length = 0;
     this.activity.push({ date: moment().calendar(), message: "Arena scores have been reset.", id: Date.now() });
   },
 });
 
 // ─── Auto-persist on any store mutation ──────────────────────────────────────
-// Debounced so rapid keystrokes (player name typing) don't thrash storage.
 
 let saveTimer: ReturnType<typeof setTimeout> | null = null;
 
 subscribe(arenaStore, () => {
+  if (!persistenceControl.enabled) return;
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
-    saveState({
-      players:  [...arenaStore.players],
-      teams:    [...arenaStore.teams],
-      scores:   { ...arenaStore.scores },
-      activity: [...arenaStore.activity],
-      history:  arenaStore.history.map(s => ({ scores: { ...s.scores }, activity: [...s.activity] })),
-      future:   arenaStore.future.map(s  => ({ scores: { ...s.scores }, activity: [...s.activity] })),
-    });
+    saveState(getPersistedState(arenaStore));
   }, 300);
 });

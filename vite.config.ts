@@ -1,39 +1,89 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
-
 import { VitePWA } from "vite-plugin-pwa";
+import { fileURLToPath } from "url";
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
+  },
   test: {
     globals: true,
     environment: "jsdom",
   },
-  base: "/counter/", // 👈 Important!
+  base: "/counter/",
   plugins: [
     tailwindcss(),
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["vite.svg"], // Update asset reference here
+      // Include all PWA assets so the service worker precaches them
+      includeAssets: ["icon-192x192.png", "icon-512x512.png", "counter.png", "vite.svg"],
+      workbox: {
+        // Ensure the SW controls all pages under /counter/
+        navigateFallback: "/counter/index.html",
+        navigateFallbackDenylist: [/^\/counter\/assets\//],
+      },
       manifest: {
-        name: "Games Counter",
-        short_name: "Counter",
-        description: "Games tracking score app",
-        theme_color: "#ffffff", // Ensure this matches your design
-        background_color: "#ffffff", // Make sure this is also appropriate
+        name: "GAME COUNTER",
+        short_name: "GAME COUNTER",
+        description: "Gaming scoreboards tracker with interactive profile pictures, game logs, and persistence toggle.",
+        theme_color: "#0F172A",
+        background_color: "#0F172A",
+        // scope and start_url must both be under the base path
+        scope: "/counter/",
         start_url: "/counter/",
-        display: "standalone", // This is the key to hide the address bar
-        icons: [
+        display: "standalone",
+        orientation: "portrait-primary",
+        categories: ["games", "utilities"],
+        shortcuts: [
           {
-            src: "/counter/icon-192x192.png",
-            sizes: "192x192",
-            type: "image/png",
+            name: "Players Setup",
+            short_name: "Players",
+            description: "Configure competitor setup",
+            url: "/counter/#/Players",
+            icons: [{ src: "icon-192x192.png", sizes: "192x192" }]
           },
           {
-            src: "/counter/icon-512x512.png",
+            name: "Teams Setup",
+            short_name: "Teams",
+            description: "Configure team setup",
+            url: "/counter/#/Teams",
+            icons: [{ src: "icon-192x192.png", sizes: "192x192" }]
+          }
+        ],
+        screenshots: [
+          {
+            src: "icon-512x512.png",
             sizes: "512x512",
             type: "image/png",
+            form_factor: "narrow",
+            label: "Game Scoreboard Screen"
+          }
+        ],
+        icons: [
+          {
+            // Relative paths — the manifest itself lives at /counter/manifest.webmanifest
+            src: "icon-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any",
+          },
+          {
+            src: "icon-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any",
+          },
+          {
+            // maskable icon for Android adaptive icons
+            src: "icon-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
           },
         ],
       },

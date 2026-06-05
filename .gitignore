@@ -131,6 +131,7 @@ ai-context/
 agent-logs/
 *.agent.json
 *.prompt.md
+.fallow
 
 # Skills directories (agent skill definitions)
 skills/

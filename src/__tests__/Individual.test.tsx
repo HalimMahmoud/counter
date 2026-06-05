@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import Individual from "../components/roster/Individual";
+import Individual from "@/components/roster/Individual";
 import "@testing-library/jest-dom";
-import { resetTestStore } from "./testHelper";
-import { arenaStore } from "../lib/arenaStore";
+import { resetTestStore } from "@/__tests__/testHelper";
+import { arenaStore } from "@/lib/arenaStore";
 
 const setup = () => {
   const mockMethod = vi.fn();

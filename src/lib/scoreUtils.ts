@@ -1,5 +1,5 @@
 import moment from "moment";
-import { arenaStore } from "./arenaStore";
+import { arenaStore } from "@/lib/arenaStore";
 
 export function handleScoreSubmit(
   points: number,

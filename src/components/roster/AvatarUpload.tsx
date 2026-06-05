@@ -1,10 +1,10 @@
 import { useRef } from "react";
-import { psShapes } from "../../lib/psShapes";
+import { psShapes } from "@/lib/psShapes";
 import {
   renderShapeIcon,
   getAvatarStyles,
   handleAvatarFileChange,
-} from "../../lib/avatarUploadUtils";
+} from "@/lib/avatarUploadUtils";
 
 interface AvatarUploadProps {
   id: number;

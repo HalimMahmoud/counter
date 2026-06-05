@@ -1,7 +1,7 @@
-import type { LogEntry, Player, Team } from "../../lib/types";
-import FeedItem from "./FeedItem";
-import { findActorShape } from "../../lib/actorUtils";
-import { getLogMessage } from "../../lib/logUtils";
+import type { LogEntry, Player, Team } from "@/lib/types";
+import FeedItem from "@/components/arena/FeedItem";
+import { findActorShape } from "@/lib/actorUtils";
+import { getLogMessage } from "@/lib/logUtils";
 
 type FeedListProps = {
   activity: readonly LogEntry[];

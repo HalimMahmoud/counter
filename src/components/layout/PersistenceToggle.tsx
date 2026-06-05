@@ -1,5 +1,5 @@
 import { HardDrive } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 type PersistenceToggleProps = {
   persistEnabled: boolean;

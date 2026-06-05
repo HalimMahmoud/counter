@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useArenaState } from "../../lib/useArenaState";
-import { arenaStore } from "../../lib/arenaStore";
-import ArenaHeader from "./ArenaHeader";
-import ArenaFeed from "./ArenaFeed";
-import ResetConfirmModal from "./ResetConfirmModal";
-import { ScoreboardGrid } from "./ScoreboardGrid";
-import { useSessionInitializer } from "../../lib/useSessionInitializer";
+import { useArenaState } from "@/lib/useArenaState";
+import { arenaStore } from "@/lib/arenaStore";
+import ArenaHeader from "@/components/arena/ArenaHeader";
+import ArenaFeed from "@/components/arena/ArenaFeed";
+import ResetConfirmModal from "@/components/arena/ResetConfirmModal";
+import { ScoreboardGrid } from "@/components/arena/ScoreboardGrid";
+import { useSessionInitializer } from "@/lib/useSessionInitializer";
 
 
 export default function Switcher() {

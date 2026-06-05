@@ -1,6 +1,6 @@
-import BrandLogo from "./BrandLogo";
-import PersistenceToggle from "./PersistenceToggle";
-import ThemeToggle from "./ThemeToggle";
+import BrandLogo from "@/components/layout/BrandLogo";
+import PersistenceToggle from "@/components/layout/PersistenceToggle";
+import ThemeToggle from "@/components/layout/ThemeToggle";
 
 type StickyTopBarProps = {
   persistEnabled: boolean;

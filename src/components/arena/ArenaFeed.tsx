@@ -1,8 +1,8 @@
-import { useArenaState } from "../../lib/useArenaState";
-import { arenaStore } from "../../lib/arenaStore";
-import { Card, CardContent } from "../ui/card";
-import ArenaFeedActions from "./ArenaFeedActions";
-import FeedList from "./FeedList";
+import { useArenaState } from "@/lib/useArenaState";
+import { arenaStore } from "@/lib/arenaStore";
+import { Card, CardContent } from "@/components/ui/card";
+import ArenaFeedActions from "@/components/arena/ArenaFeedActions";
+import FeedList from "@/components/arena/FeedList";
 
 export default function ArenaFeed() {
   const snap = useArenaState();

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { handleScoreSubmit } from "../lib/scoreUtils";
+import { handleScoreSubmit } from "@/lib/scoreUtils";
 
 describe("scoreUtils", () => {
   it("should be defined", () => {

@@ -1,5 +1,5 @@
-import type { Player, CompetitorActionProps } from "../../lib/types";
-import CompetitorCard from "./CompetitorCard";
+import type { Player, CompetitorActionProps } from "@/lib/types";
+import CompetitorCard from "@/components/roster/CompetitorCard";
 
 type IndividualProps = Player & CompetitorActionProps;
 

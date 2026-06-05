@@ -1,4 +1,4 @@
-import ModeCard from "../components/home/ModeCard";
+import ModeCard from "@/components/home/ModeCard";
 
 function HomeHeader() {
   return (

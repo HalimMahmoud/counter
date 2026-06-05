@@ -1,5 +1,5 @@
-import { psShapes } from "../../lib/psShapes";
-import type { LogEntry } from "../../lib/types";
+import { psShapes } from "@/lib/psShapes";
+import type { LogEntry } from "@/lib/types";
 
 type FeedItemProps = {
   log: LogEntry;

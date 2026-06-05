@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getInitialTheme, applyTheme, type Theme } from "./themeUtils";
+import { getInitialTheme, applyTheme, type Theme } from "@/lib/themeUtils";
 
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(getInitialTheme);

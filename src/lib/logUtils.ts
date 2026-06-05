@@ -1,4 +1,4 @@
-import type { LogEntry, Player, Team } from "./types";
+import type { LogEntry, Player, Team } from "@/lib/types";
 
 export function getCompetitorName(
   competitorId: string,

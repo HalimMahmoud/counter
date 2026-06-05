@@ -1,5 +1,5 @@
 import { useSnapshot } from "valtio";
-import { arenaStore } from "./arenaStore";
+import { arenaStore } from "@/lib/arenaStore";
 
 export function useArenaState() {
   return useSnapshot(arenaStore);

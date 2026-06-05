@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { renderShapeIcon, getAvatarStyles, handleAvatarFileChange } from "../lib/avatarUploadUtils";
+import { renderShapeIcon, getAvatarStyles, handleAvatarFileChange } from "@/lib/avatarUploadUtils";
 
 describe("avatarUploadUtils", () => {
   it("should be defined", () => {

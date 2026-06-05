@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import { useArenaState } from "../lib/useArenaState";
-import { arenaStore } from "../lib/arenaStore";
-import { Card, CardContent } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import RosterHeader from "../components/roster/RosterHeader";
-import TeamItem from "../components/roster/TeamItem";
+import { useArenaState } from "@/lib/useArenaState";
+import { arenaStore } from "@/lib/arenaStore";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import RosterHeader from "@/components/roster/RosterHeader";
+import TeamItem from "@/components/roster/TeamItem";
 
 export default function Teams() {
   const snap = useArenaState();

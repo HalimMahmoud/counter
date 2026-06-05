@@ -1,5 +1,5 @@
-import { psShapes } from "./psShapes";
-import type { LogEntry, Player, Team } from "./types";
+import { psShapes } from "@/lib/psShapes";
+import type { LogEntry, Player, Team } from "@/lib/types";
 
 function findShapeById(
   competitorId: string,

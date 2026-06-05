@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, beforeEach, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import App from "../App";
+import App from "@/App";
 import "@testing-library/jest-dom";
-import { resetTestStore } from "./testHelper";
+import { resetTestStore } from "@/__tests__/testHelper";
 
 beforeAll(() => {
   Object.defineProperty(window, "matchMedia", {

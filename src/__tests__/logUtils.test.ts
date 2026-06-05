@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getCompetitorName, formatScoreLog, getLogMessage } from "../lib/logUtils";
+import { getCompetitorName, formatScoreLog, getLogMessage } from "@/lib/logUtils";
 
 describe("logUtils", () => {
   it("should be defined and return correct messages", () => {

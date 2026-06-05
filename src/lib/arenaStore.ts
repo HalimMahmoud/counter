@@ -1,6 +1,6 @@
 import { proxy, subscribe } from "valtio";
 import moment from "moment";
-import type { Player, Team, LogEntry } from "./types";
+import type { Player, Team, LogEntry } from "@/lib/types";
 
 export type { Player, Team, LogEntry };
 

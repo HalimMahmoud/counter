@@ -1,9 +1,9 @@
-import { useArenaState } from "../../lib/useArenaState";
-import AvatarUpload from "./AvatarUpload";
-import ScoreControls from "../arena/ScoreControls";
-import CompetitorNameEditor from "./CompetitorNameEditor";
-import { useCompetitorCardState } from "../../lib/useCompetitorCardState";
-import type { CompetitorActionProps } from "../../lib/types";
+import { useArenaState } from "@/lib/useArenaState";
+import AvatarUpload from "@/components/roster/AvatarUpload";
+import ScoreControls from "@/components/arena/ScoreControls";
+import CompetitorNameEditor from "@/components/roster/CompetitorNameEditor";
+import { useCompetitorCardState } from "@/lib/useCompetitorCardState";
+import type { CompetitorActionProps } from "@/lib/types";
 
 type CompetitorCardProps = CompetitorActionProps & {
   type: "player" | "team";

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Minus, Plus } from "lucide-react";
-import { handleScoreSubmit } from "../../lib/scoreUtils";
+import { handleScoreSubmit } from "@/lib/scoreUtils";
 
 type ScoreControlsProps = {
   competitorKey: string;

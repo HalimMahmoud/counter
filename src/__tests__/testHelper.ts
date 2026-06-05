@@ -1,4 +1,4 @@
-import { arenaStore } from "../lib/arenaStore";
+import { arenaStore } from "@/lib/arenaStore";
 
 export function resetTestStore(resetLobbyFlag = false) {
   localStorage.clear();

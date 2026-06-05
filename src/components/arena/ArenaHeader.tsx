@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, RotateCcw } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 type ArenaHeaderProps = {
   isTeamMode: boolean;

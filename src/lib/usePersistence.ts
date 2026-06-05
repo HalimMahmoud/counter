@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { persistenceControl, setPersistence, arenaStore } from "./arenaStore";
+import { persistenceControl, setPersistence, arenaStore } from "@/lib/arenaStore";
 
 export function usePersistence(navigate: (path: string) => void) {
   const [persistEnabled, setPersistEnabled] = useState(persistenceControl.enabled);

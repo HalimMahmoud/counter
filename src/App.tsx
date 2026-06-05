@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import StickyTopBar from "./components/layout/StickyTopBar";
-import GamingBackgroundShapes from "./components/layout/GamingBackgroundShapes";
-import PersistConfirmModal from "./components/roster/PersistConfirmModal";
-import { useTheme } from "./lib/useTheme";
-import { usePersistence } from "./lib/usePersistence";
-import { AppRoutes } from "./components/AppRoutes";
+import StickyTopBar from "@/components/layout/StickyTopBar";
+import GamingBackgroundShapes from "@/components/layout/GamingBackgroundShapes";
+import PersistConfirmModal from "@/components/roster/PersistConfirmModal";
+import { useTheme } from "@/lib/useTheme";
+import { usePersistence } from "@/lib/usePersistence";
+import { AppRoutes } from "@/components/AppRoutes";
 
 function App() {
   const navigate = useNavigate();

@@ -28,8 +28,8 @@ export default defineConfig({
         navigateFallbackDenylist: [/^\/counter\/assets\//],
       },
       manifest: {
-        name: "GAME COUNTER",
-        short_name: "GAME COUNTER",
+        name: "Game Counter",
+        short_name: "Game Counter",
         description: "Gaming scoreboards tracker with interactive profile pictures, game logs, and persistence toggle.",
         theme_color: "#0F172A",
         background_color: "#0F172A",

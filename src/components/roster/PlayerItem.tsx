@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { psShapes } from "../../lib/psShapes";
-import AvatarUpload from "./AvatarUpload";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { psShapes } from "@/lib/psShapes";
+import AvatarUpload from "@/components/roster/AvatarUpload";
 
 interface IPlayerComponent {
   name: string;

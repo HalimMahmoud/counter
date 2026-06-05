@@ -1,8 +1,8 @@
-import { Card, CardContent } from "../ui/card";
-import type { Player, Team } from "../../lib/types";
-import Individual from "../roster/Individual";
-import Group from "../roster/Group";
-import { useCompetitorActions } from "../../lib/useArenaState";
+import { Card, CardContent } from "@/components/ui/card";
+import type { Player, Team } from "@/lib/types";
+import Individual from "@/components/roster/Individual";
+import Group from "@/components/roster/Group";
+import { useCompetitorActions } from "@/lib/useArenaState";
 
 function VersusOverlay({ show }: { show: boolean }) {
   if (!show) return null;

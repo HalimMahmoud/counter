@@ -7,9 +7,9 @@ import {
   saveState,
   persistenceControl,
   setPersistence,
-} from "../lib/arenaStore";
-import { resetTestStore } from "./testHelper";
-import { getLogMessage } from "../lib/logUtils";
+} from "@/lib/arenaStore";
+import { resetTestStore } from "@/__tests__/testHelper";
+import { getLogMessage } from "@/lib/logUtils";
 
 describe("arenaStore — lobby (players & teams) initialization", () => {
   beforeEach(() => resetTestStore(true));

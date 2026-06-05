@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { arenaStore } from "./arenaStore";
+import { arenaStore } from "@/lib/arenaStore";
 
 export function useSessionInitializer(snap: any, isTeamMode: boolean, playersLength: number, teamsLength: number) {
   useEffect(() => {

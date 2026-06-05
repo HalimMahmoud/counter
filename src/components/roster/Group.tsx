@@ -1,5 +1,5 @@
-import type { Team, CompetitorActionProps } from "../../lib/types";
-import CompetitorCard from "./CompetitorCard";
+import type { Team, CompetitorActionProps } from "@/lib/types";
+import CompetitorCard from "@/components/roster/CompetitorCard";
 
 type GroupProps = Team & CompetitorActionProps;
 

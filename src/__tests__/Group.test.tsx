@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import Group from "../components/roster/Group";
+import Group from "@/components/roster/Group";
 import "@testing-library/jest-dom";
-import { resetTestStore } from "./testHelper";
-import { arenaStore } from "../lib/arenaStore";
+import { resetTestStore } from "@/__tests__/testHelper";
+import { arenaStore } from "@/lib/arenaStore";
 
 describe("Group team scorecard component", () => {
   beforeEach(() => resetTestStore(false));

@@ -3,8 +3,16 @@ import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { fileURLToPath } from "url";
+import fs from "fs";
+
+const pkg = JSON.parse(
+  fs.readFileSync(new URL("./package.json", import.meta.url), "utf-8")
+);
 
 export default defineConfig({
+  define: {
+    "import.meta.env.APP_VERSION": JSON.stringify(pkg.version),
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -30,6 +38,7 @@ export default defineConfig({
       manifest: {
         name: "Game Counter",
         short_name: "Game Counter",
+        version: pkg.version,
         description: "Gaming scoreboards tracker with interactive profile pictures, game logs, and persistence toggle.",
         theme_color: "#0F172A",
         background_color: "#0F172A",
@@ -86,7 +95,7 @@ export default defineConfig({
             purpose: "maskable",
           },
         ],
-      },
+      } as any,
     }),
   ],
 });

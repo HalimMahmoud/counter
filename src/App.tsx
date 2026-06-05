@@ -36,6 +36,10 @@ function App() {
         </div>
       </div>
 
+      <footer className="w-full text-center py-4 text-xs text-text-secondary/60 relative z-10 border-t border-theme-border/20 bg-theme-card/10 backdrop-blur-sm">
+        <p>© {new Date().getFullYear()} Game Counter • v{import.meta.env.APP_VERSION}</p>
+      </footer>
+
       <PersistConfirmModal
         isOpen={showPersistConfirm}
         onCancel={() => setShowPersistConfirm(false)}

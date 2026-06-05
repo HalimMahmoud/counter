@@ -56,6 +56,50 @@ export function getAvatarStyles(isArena: boolean, avatar?: string, colorClass: s
   };
 }
 
+export function compressImage(
+  dataUrl: string,
+  maxWidth: number,
+  maxHeight: number,
+  quality: number,
+  callback: (compressedDataUrl: string) => void
+) {
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement("canvas");
+    let width = img.width;
+    let height = img.height;
+
+    if (width > height) {
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+    } else {
+      if (height > maxHeight) {
+        width = Math.round((width * maxHeight) / height);
+        height = maxHeight;
+      }
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      callback(dataUrl);
+      return;
+    }
+
+    ctx.drawImage(img, 0, 0, width, height);
+    const compressed = canvas.toDataURL("image/jpeg", quality);
+    callback(compressed);
+  };
+  img.onerror = () => {
+    callback(dataUrl);
+  };
+  img.src = dataUrl;
+}
+
 export function handleAvatarFileChange(
   e: React.ChangeEvent<HTMLInputElement>,
   id: number,
@@ -63,15 +107,17 @@ export function handleAvatarFileChange(
 ) {
   const file = e.target.files?.[0];
   if (file) {
-    if (file.size > 200 * 1024) {
-      alert("Please select an image smaller than 200KB to ensure smooth session saving.");
+    if (file.size > 10 * 1024 * 1024) {
+      alert("Please select an image smaller than 10MB.");
       return;
     }
     const reader = new FileReader();
     reader.onload = (event) => {
       const result = event.target?.result;
       if (typeof result === "string") {
-        onUpload(id, result);
+        compressImage(result, 256, 256, 0.7, (compressedUrl) => {
+          onUpload(id, compressedUrl);
+        });
       }
     };
     reader.readAsDataURL(file);
